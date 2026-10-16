@@ -20,7 +20,11 @@
   function cellText(ws, r, c) {
     const cell = ws[XLSX.utils.encode_cell({ r, c })];
     if (!cell || cell.v == null) return '';
-    if (cell.t === 'n' && cell.w != null) return String(cell.w).trim();
+    if (cell.t === 'n') {
+      // Format "General" -> pakai desimal Indonesia (0,75). Format khusus (mis. 75%) dipertahankan.
+      if (!cell.z || cell.z === 'General') return cell.v.toLocaleString('id-ID', { useGrouping: false, maximumFractionDigits: 10 });
+      if (cell.w != null) return String(cell.w).trim();
+    }
     return String(cell.v).trim();
   }
   function cellFormula(ws, r, c) {
