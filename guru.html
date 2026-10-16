@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guru · IziLearning</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="host">
+  <header class="topbar">
+    <a class="brand" href="index.html">🎓 Izi<b>Learning</b></a>
+    <span class="net" id="net" hidden></span>
+    <button class="icon-btn" data-mute title="Suara"></button>
+  </header>
+
+  <!-- ================= SETUP ================= -->
+  <section class="screen active" id="scr-setup">
+    <div class="wrap">
+      <div class="card resume" id="resume" hidden></div>
+
+      <div class="card">
+        <h2>1. Upload Soal</h2>
+        <p class="muted">File Excel (.xlsx) berisi soal pilihan ganda. Belum punya formatnya? Download template dulu.</p>
+        <label class="drop" id="drop">
+          <input type="file" id="file" accept=".xlsx,.xls,.csv" hidden>
+          <span class="drop-ico">📄</span>
+          <span id="drop-txt"><b>Klik untuk pilih file</b> atau seret file Excel ke sini</span>
+        </label>
+        <div class="row">
+          <button class="btn ghost" id="btn-template">⬇️ Download Template Excel</button>
+        </div>
+        <div id="parse-result"></div>
+      </div>
+
+      <div class="card">
+        <h2>2. Pilih Game</h2>
+        <div class="game-grid" id="game-grid"></div>
+      </div>
+
+      <div class="card">
+        <h2>3. Pengaturan</h2>
+        <div class="seg" id="preset">
+          <button data-preset="ujian" class="on">📝 Mode Ujian<small>Harian / UTS</small></button>
+          <button data-preset="challenge">🏆 Mode Challenge<small>Kompetisi di kelas</small></button>
+        </div>
+        <div class="form-grid">
+          <label>Judul<input id="f-title" maxlength="80" placeholder="cth. Ulangan Harian IPA Bab 3"></label>
+          <label>Total waktu (menit)<input id="f-duration" type="number" min="1" max="300" value="30"></label>
+          <label>KKM (nilai minimal lulus)<input id="f-kkm" type="number" min="0" max="100" value="75"></label>
+          <label>Jumlah soal per murid<input id="f-count" type="number" min="0" value="0"><small class="muted">0 = semua soal. Isi lebih kecil untuk mengambil soal acak dari bank soal.</small></label>
+        </div>
+        <div class="toggles">
+          <label class="tg"><input type="checkbox" id="f-shuffleQ" checked><span></span>Acak urutan soal tiap murid</label>
+          <label class="tg"><input type="checkbox" id="f-shuffleO" checked><span></span>Acak urutan pilihan jawaban</label>
+          <label class="tg"><input type="checkbox" id="f-feedback"><span></span>Langsung tampilkan benar/salah tiap soal</label>
+          <label class="tg"><input type="checkbox" id="f-rank"><span></span>Tampilkan poin & peringkat ke murid</label>
+          <label class="tg"><input type="checkbox" id="f-reviewNow"><span></span>Pembahasan bisa dibuka murid begitu ia selesai<small class="muted">(jika mati: pembahasan terbuka setelah guru mengakhiri sesi, supaya jawaban tidak bocor)</small></label>
+        </div>
+      </div>
+
+      <div class="sticky-cta">
+        <button class="btn primary big" id="btn-create" disabled>🚪 Buat Room</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= LOBBY ================= -->
+  <section class="screen" id="scr-lobby">
+    <div class="wrap wide">
+      <div class="lobby-head card">
+        <div class="lobby-code">
+          <div class="muted">Buka <b id="join-url-short"></b> lalu masukkan kode:</div>
+          <div class="code" id="room-code">------</div>
+          <div class="row">
+            <button class="btn ghost sm" id="btn-copy">📋 Salin link</button>
+            <span class="muted" id="lobby-game"></span>
+          </div>
+          <p class="warn-note" id="file-note" hidden>⚠️ Halaman ini dibuka dari file lokal. Agar murid bisa scan QR, buka IziLearning lewat link online (GitHub Pages).</p>
+        </div>
+        <div class="qr" id="qr"></div>
+      </div>
+      <div class="card">
+        <div class="row between">
+          <h2>Murid di room: <span id="lobby-count">0</span></h2>
+          <span class="muted">Klik murid untuk mengeluarkan.</span>
+        </div>
+        <div class="players" id="lobby-players"><p class="muted waiting">Menunggu murid bergabung… 👀</p></div>
+      </div>
+      <div class="sticky-cta row">
+        <button class="btn ghost" id="btn-cancel">✖ Batalkan Room</button>
+        <button class="btn primary big" id="btn-launch" disabled>🚀 Mulai Game!</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PLAY ================= -->
+  <section class="screen" id="scr-play">
+    <div class="wrap wide">
+      <div class="play-head card">
+        <div>
+          <div class="muted" id="play-title"></div>
+          <div class="row"><span class="code sm" id="play-code"></span><span class="muted" id="play-stats"></span></div>
+        </div>
+        <div class="timer big" id="host-timer">00:00</div>
+        <div class="row">
+          <button class="btn ghost sm" id="btn-addtime">➕ 5 menit</button>
+          <button class="btn danger sm" id="btn-end">⏹ Akhiri</button>
+        </div>
+      </div>
+      <div class="tabs">
+        <button data-tab="arena" class="on">🎮 Arena</button>
+        <button data-tab="monitor">📊 Pantau Murid</button>
+        <button id="btn-full" title="Layar penuh">⛶</button>
+      </div>
+      <div class="card tab-pane on" id="tab-arena"><div id="arena"></div></div>
+      <div class="card tab-pane" id="tab-monitor">
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>Murid</th><th>Progres</th><th>Benar</th><th>Nilai</th><th>Poin</th><th>Status</th><th title="Berapa kali keluar dari halaman">⚠️ Tab</th></tr></thead>
+            <tbody id="monitor-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="join-mini muted" id="join-mini"></div>
+    </div>
+    <div class="countdown" id="host-countdown" hidden></div>
+  </section>
+
+  <!-- ================= END ================= -->
+  <section class="screen" id="scr-end">
+    <div class="wrap wide">
+      <div class="card center">
+        <h1>🎉 Sesi Selesai!</h1>
+        <p class="muted" id="end-title"></p>
+        <div class="podium" id="podium"></div>
+        <div class="stat-row" id="end-stats"></div>
+        <div class="row center">
+          <button class="btn primary big" id="btn-download">⬇️ Download Nilai (Excel)</button>
+        </div>
+        <p class="muted small">Data tidak disimpan di server. Download nilai sebelum menutup halaman ini.</p>
+      </div>
+      <div class="card">
+        <h2>Hasil Murid</h2>
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead><tr><th>#</th><th>Murid</th><th>Benar</th><th>Salah</th><th>Kosong</th><th>Nilai</th><th>Status</th><th>Poin</th><th>⚠️ Tab</th></tr></thead>
+            <tbody id="end-body"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card" id="hard-card">
+        <h2>Soal yang Paling Banyak Salah</h2>
+        <div id="hard-list"></div>
+      </div>
+      <div class="row center">
+        <button class="btn ghost" id="btn-new">🔁 Buat Room Baru</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="vendor/peerjs.min.js"></script>
+  <script src="vendor/xlsx.full.min.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+  <script src="vendor/qrcode.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/games.js"></script>
+  <script src="assets/js/excel.js"></script>
+  <script src="assets/js/host.js"></script>
+</body>
+</html>
