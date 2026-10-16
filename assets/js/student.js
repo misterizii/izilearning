@@ -39,6 +39,7 @@
     timeUp: false,
     waiters: {},
     lastTick: -1,
+    lastMsgAt: 0,
     leftTab: false,
   };
 
@@ -185,11 +186,13 @@
       clearTimeout(to);
       if (S.conn !== conn) return;
       S.attempts = 0;
+      S.lastMsgAt = Date.now();
       setNet('online');
       IZI.safeSend(conn, { t: 'hello', clientId: S.clientId, name: S.name, avatar: S.avatar, have: Object.keys(S.images) });
     });
     conn.on('data', (m) => {
       if (S.conn !== conn) return;
+      S.lastMsgAt = Date.now();
       try {
         onMsg(m);
       } catch (e) {
@@ -775,7 +778,19 @@
     }
   });
   // jaga koneksi tetap hidup
-  setInterval(() => S.conn && S.conn.open && send({ t: 'ping' }), 15000);
+  // Detak jantung: jika lama tidak ada kabar dari guru, sambung ulang tanpa menunggu WebRTC sadar sendiri.
+  setInterval(() => {
+    if (!S.conn || !S.conn.open || S.terminal) return;
+    if (Date.now() - S.lastMsgAt > 15000) {
+      console.warn('Tidak ada respon dari guru, menyambung ulang');
+      const c = S.conn;
+      S.conn = null;
+      try {
+        c.close();
+      } catch (e) {}
+      onLost();
+    } else send({ t: 'ping' });
+  }, 5000);
 
   document.addEventListener('DOMContentLoaded', () => {
     IZI.bindMute();
