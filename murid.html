@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="theme-color" content="#6C3BFF">
+  <title>Murid · IziLearning</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="student">
+  <header class="topbar">
+    <a class="brand" href="index.html">🎓 Izi<b>Learning</b></a>
+    <span class="net" id="net" hidden></span>
+    <button class="icon-btn" data-mute title="Suara"></button>
+  </header>
+
+  <!-- JOIN -->
+  <section class="screen active" id="scr-join">
+    <div class="wrap narrow">
+      <div class="card center">
+        <div class="hero-emoji">🎮</div>
+        <h1>Ayo Masuk Room!</h1>
+        <form id="join-form" autocomplete="off">
+          <label>Kode Room<input id="j-code" class="code-input" maxlength="6" placeholder="ABC123" autocapitalize="characters" required></label>
+          <label>Nama Kamu<input id="j-name" maxlength="30" placeholder="Nama lengkap" required></label>
+          <div class="label">Pilih Avatar</div>
+          <div class="avatars" id="j-avatars"></div>
+          <div class="err-note" id="j-err" hidden></div>
+          <button class="btn primary big full" id="j-btn">Masuk ➜</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONNECTING -->
+  <section class="screen" id="scr-wait">
+    <div class="wrap narrow center">
+      <div class="spinner"></div>
+      <h2 id="wait-text">Menghubungkan ke room…</h2>
+      <p class="muted" id="wait-sub"></p>
+      <button class="btn ghost" id="wait-cancel">Batal</button>
+    </div>
+  </section>
+
+  <!-- LOBBY -->
+  <section class="screen" id="scr-lobby">
+    <div class="wrap narrow center">
+      <div class="card">
+        <div class="me-av bounce-loop" id="lobby-av"></div>
+        <h2 id="lobby-name"></h2>
+        <p class="ok-note">✅ Kamu sudah masuk! Tunggu guru memulai game…</p>
+        <div class="game-badge" id="lobby-game"></div>
+        <div class="muted small" id="lobby-info"></div>
+      </div>
+      <div class="card">
+        <div class="muted">Teman yang sudah masuk (<span id="lobby-count">0</span>)</div>
+        <div class="mini-players" id="lobby-players"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAY -->
+  <section class="screen" id="scr-play">
+    <div class="play-top">
+      <div class="timer" id="timer">00:00</div>
+      <div class="pts" id="pts" hidden></div>
+      <button class="btn ghost sm" id="btn-submit">Kumpulkan</button>
+    </div>
+    <div id="stage"></div>
+    <div class="wrap narrow play-body">
+      <div class="qcard card" id="qcard">
+        <div class="qnum" id="qnum"></div>
+        <div class="qimg" id="qimg"></div>
+        <div class="qtext" id="qtext"></div>
+      </div>
+      <div class="answers" id="answers"></div>
+      <div class="row center"><button class="btn ghost sm" id="btn-skip">⏭️ Lewati dulu</button></div>
+      <div class="mini-rank" id="mini-rank" hidden></div>
+    </div>
+    <div class="feedback" id="feedback" hidden></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="scr-result">
+    <div class="wrap narrow center">
+      <div class="card result-card" id="result-card"></div>
+      <div class="row center">
+        <button class="btn primary big" id="btn-review">📖 Lihat Pembahasan</button>
+      </div>
+      <p class="muted small" id="review-note"></p>
+      <button class="btn ghost sm" id="btn-leave">Keluar</button>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="screen" id="scr-review">
+    <div class="wrap narrow">
+      <div class="row between sticky-head">
+        <button class="btn ghost sm" id="btn-back">⬅ Kembali</button>
+        <b id="review-sum"></b>
+      </div>
+      <div id="review-list"></div>
+    </div>
+  </section>
+
+  <!-- MESSAGE -->
+  <section class="screen" id="scr-msg">
+    <div class="wrap narrow center">
+      <div class="card">
+        <div class="hero-emoji" id="msg-emoji">👋</div>
+        <h2 id="msg-title"></h2>
+        <p id="msg-text" class="muted"></p>
+        <a class="btn primary" href="murid.html">Masuk Room Lain</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="countdown" id="countdown" hidden></div>
+
+  <script src="vendor/peerjs.min.js"></script>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/games.js"></script>
+  <script src="assets/js/student.js"></script>
+</body>
+</html>
